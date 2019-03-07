@@ -13,7 +13,7 @@ from replay_buffer import ReplayBuffer
 env = gym.make('MountainCar-v0')
 env.seed(1); torch.manual_seed(1); np.random.seed(1)
 
-        
+# hyperparameters
 episode_count = 1000
 buffer_size = 100000
 max_steps = 200
@@ -90,16 +90,15 @@ class Model(nn.Module):
         self.zero_grad()
         loss.backward()
         self.optimizer.step()
-
- 
     
 # to encourage machine to go higher
 max_position = -.4
 positions = np.ndarray([0,2])
 rewards = []
 successful = []
-print('Testing with random actions ->')
+
 # testing for 1000 episodes with random actions
+print('Testing with random actions ->')
 for episode in trange(1000):
     running_reward = 0
     env.reset()
@@ -122,16 +121,13 @@ for episode in trange(1000):
 print('Furthest Position: {}'.format(max_position))
 print('successful episodes: {}'.format(np.count_nonzero(successful)))
 
-max_position = -0.4
 # defining the model
 model = Model()
-loss_func = nn.MSELoss()
-# optimizer = optim.SGD(model.parameters(), lr=learning_rate)
-optimizer = optim.Adam(model.parameters(),lr = learning_rate)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.9)
-# '''
+scheduler = optim.lr_scheduler.StepLR(model.optimizer, step_size=1, gamma=0.9)
+max_position = -0.4
 has_solved = False
 first_solve_at = -1
+
 for episode in trange(episode_count):
     state = env.reset()
     score = 0
@@ -184,11 +180,9 @@ for episode in trange(episode_count):
             reward_history.append(score)
             all_positions.append(next_state[0])
             break
-            
         else:
             state = next_state
             
-# '''
 # model.load_state_dict(torch.load('dqn_mountain_car_parameters.model'))
 # model = torch.load('dqn_mountain_car_model.model')
 print('First solved at -> ',first_solve_at)
@@ -207,7 +201,6 @@ for episode in range(5):
         if s1[0] >= 0.5:
             r += 1
         score += r
-        
         if d:
             print('Score -> ',score)
             break
@@ -227,6 +220,7 @@ plt.xlabel('Episode')
 plt.ylabel('Reward')
 plt.show()
 
+# plot policy to show which actions are taken
 X = np.random.uniform(-1.2, 0.6, 10000)
 Y = np.random.uniform(-0.07, 0.07, 10000)
 Z = []
@@ -249,6 +243,7 @@ ax.set_xlabel('Position')
 ax.set_ylabel('Velocity')
 ax.set_title('Policy')
 recs = []
+
 for i in range(0,3):
      recs.append(mpatches.Rectangle((0,0),1,1,fc=sorted(colors.unique())[i]))
 plt.legend(recs,labels,loc=4,ncol=3)
@@ -257,4 +252,3 @@ plt.show()
 
 # torch.save(model.state_dict,'dqn_mountain_car_parameters.model')
 # torch.save(model,'dqn_mountain_car_model.model')
-
