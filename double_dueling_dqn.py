@@ -255,7 +255,7 @@ for episode in trange(episode_count):
 # model = torch.load('dqn_mountain_car_model.model')
 print('First solved at -> ',first_solve_at)
 print('Succesful episodes -> ',success_count)
-print('Success Rate => {.2f} %'.format(success_count/episode_count * 100))
+print('Success Rate => {} %'.format(success_count/episode_count * 100))
 
 for episode in range(5):
     s = env.reset()
